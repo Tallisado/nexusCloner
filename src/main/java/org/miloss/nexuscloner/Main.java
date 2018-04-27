@@ -167,14 +167,14 @@ public class Main {
         CommandLine parse = parser.parse(opts, args);
 
         initSsl();
-        if (parse.hasOption("help") 
-                || !parse.hasOption("url") 
+        if (parse.hasOption("help")
+                || !parse.hasOption("url")
                 || (!parse.hasOption("index") && !parse.hasOption("download") )){
             HelpFormatter f = new HelpFormatter();
             f.printHelp("java -jar nexusCloner-{VERSION}-jar-with-dependencies.jar {options}", opts);
             return;
         }
-        
+
         String url = parse.getOptionValue("url");
         if (!url.endsWith("/")) {
             url = url + "/";
@@ -195,14 +195,16 @@ public class Main {
             System.out.println("using cookie " + cookie);
         }
         sourceUrl = url;
+
         File outputFolder;
         if (parse.hasOption("output")) {
             outputFolder= new File(parse.getOptionValue("output"));
-        } else 
+        } else
             outputFolder= new File("./output");
         outputFolder.mkdirs();
         Kryo kryo = new Kryo();
         if (parse.hasOption("index")) {
+            System.out.println("About to process url:" + url );
             process(url, outputFolder);
             //store the index
             Iterator<Container> iterator = filesToDownload.iterator();
@@ -278,7 +280,7 @@ public class Main {
             String link = e.attr("href");
             if (!ignore(link)) {
                 if (isDirectory(link)) {
-                    process(link,
+                    process(url+link,
                             outputFolder);
                 } else {
                     //download the file
